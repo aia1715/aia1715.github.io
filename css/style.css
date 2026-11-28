@@ -1,0 +1,275 @@
+@font-face {
+  font-family: "RM";
+  src: url(/fonts/roboto-mono-latin-400.woff2) format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: "RM";
+  src: url(/fonts/roboto-mono-cyrillic-400.woff2) format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: "RM";
+  src: url(/fonts/roboto-mono-latin-700.woff2) format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: "RM";
+  src: url(/fonts/roboto-mono-cyrillic-700.woff2) format("woff2");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+:root {
+  --bg: #e6e6e3;
+  --paper: #fff;
+  --ink: #000;
+  --pad: 24px;
+  --small: 10px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper) url(/static/paper2.webp) 0 0 / 512px;
+  color: var(--ink);
+  font: 14px/1.65 "RM", ui-monospace, monospace;
+}
+a { color: inherit; text-decoration: none; }
+b { font-weight: 700; }
+
+/* ——— лента чека ——— */
+.paper {
+  position: relative;
+  width: min(400px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 44px var(--pad) 40px;
+}
+@media (min-width: 440px) {
+  body { display: flex; flex-direction: column; min-height: 100vh; padding: 64px 16px 80px; }
+  .paper { min-height: 0; margin: auto; }
+}
+
+.c { text-align: center; }
+p.c { margin: 0; }
+
+/* ——— чековые разделители из символов ——— */
+.rule {
+  height: 11px;
+  margin: 14px 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11'%3E%3Crect x='1' y='5' width='5' height='1.3'/%3E%3C/svg%3E") center / 7px 11px space no-repeat;
+}
+.rule.dbl { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11'%3E%3Crect x='1' y='3.6' width='5' height='1.3'/%3E%3Crect x='1' y='6.6' width='5' height='1.3'/%3E%3C/svg%3E"); }
+
+.head .c { font-size: 11px; line-height: 1.5; }
+
+/* ——— главная ——— */
+.cols, .list a, .sum div {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2ch;
+}
+.cols { font-size: var(--small); font-weight: 700; }
+.cols span:nth-child(2) { flex: 1; }
+.list { list-style: none; margin: 0; padding: 0; }
+.list a { padding: 4px 0; font-size: 12px; line-height: 1.45; }
+.list .n, .list .d { flex: none; font-size: var(--small); }
+.list .n, .cols span:first-child { width: 3ch; }
+.list .t { flex: 0 1 auto; }
+.list .dots {
+  flex: 1 1 3ch;
+  min-width: 3ch;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--small);
+}
+.list .dots::before { content: "................................................................................................................................"; }
+.list a:hover .t, .list a:focus-visible .t { text-decoration: underline; text-underline-offset: 3px; }
+
+/* итоги */
+.sum { margin: 0; font-size: var(--small); }
+.sum div { justify-content: space-between; padding: 1px 0; }
+.sum dt { font-weight: 700; }
+.sum dd { margin: 0; }
+
+/* ——— запись ——— */
+h1 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+.text { margin: 18px 0 6px; }
+.text p { margin: 0 0 1.1em; }
+.text a { text-decoration: underline; text-underline-offset: 3px; }
+
+.photo { position: relative; display: block; margin: 20px calc(-1 * var(--pad)); }
+.photo img, .photo picture, .photo .clr { display: block; width: 100%; height: auto; }
+/* «напечатанный» слой поверх цветного; при наведении или прокрутке уходит построчно, как из принтера */
+.photo .prt {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path .9s steps(18);
+}
+.photo .prt picture, .photo .prt img { height: 100%; }
+.photo .prt img { object-fit: cover; filter: url(#print); mix-blend-mode: multiply; }
+.photo .prt { background: url(/static/paper2.webp) 0 0 / 512px; }
+.photo.on .prt { clip-path: inset(100% 0 0 0); }
+@media (hover: hover) {
+  .photo:hover .prt, .photo:focus-visible .prt { clip-path: inset(100% 0 0 0); }
+}
+
+/* ——— комментарии ——— */
+.clist { list-style: none; margin: 20px 0 8px; padding: 0; }
+.clist:empty { display: none; }
+.clist li { margin-bottom: 16px; }
+.clist .who {
+  display: flex;
+  justify-content: space-between;
+  gap: 2ch;
+  font-size: var(--small);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.clist .who span + span { font-weight: 400; }
+.clist p { margin: 2px 0 0; font-size: 13px; white-space: pre-line; overflow-wrap: anywhere; }
+
+/* форма — строки чека: подпись слева, поле — пунктирная линия, отправка — одна стрелка */
+.ftitle { margin: 28px 0 10px; font-size: var(--small); font-weight: 700; text-align: center; letter-spacing: .08em; }
+.cform label { display: flex; align-items: baseline; gap: 1.2ch; margin-bottom: 6px; }
+.cform label span { flex: none; width: 6ch; font-size: var(--small); font-weight: 700; }
+.cform input, .cform textarea {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0;
+  border: 0;
+  border-bottom: 1px dashed var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px; /* меньше 16px — iPhone начинает зумить страницу */
+  line-height: 1.4;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.cform ::placeholder { color: #9a9a9a; opacity: 1; }
+.cform textarea { resize: none; min-height: 4.4em; field-sizing: content; }
+.cform input:focus, .cform textarea:focus { outline: 0; border-bottom-style: solid; }
+.cform button {
+  padding: 2px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--small);
+  font-weight: 700;
+  letter-spacing: .08em;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.cform > button::before { content: "[ "; }
+.cform > button::after { content: " ]"; }
+.cform button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cform button:disabled { opacity: .4; }
+.send { display: flex; justify-content: space-between; align-items: center; gap: 2ch; margin-top: 4px; }
+.send .status { margin: 0; text-align: left; }
+.send button { font-size: 20px; line-height: 1; padding: 2px 0 4px; letter-spacing: 0; }
+.send button:hover { text-decoration: none; transform: translateX(2px); }
+.status { margin: 4px 0 0; font-size: var(--small); min-height: 1.5em; text-align: center; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.back { font-size: var(--small); }
+.back:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.barcode {
+  margin: 28px auto 0;
+  width: 72%;
+  height: 52px;
+  background: linear-gradient(90deg,#000 0.0% 0.6%,transparent 0.6% 2.4%,#000 2.4% 3.0%,transparent 3.0% 3.6%,#000 3.6% 4.8%,transparent 4.8% 6.0%,#000 6.0% 6.6%,transparent 6.6% 8.4%,#000 8.4% 10.2%,transparent 10.2% 11.4%,#000 11.4% 12.6%,transparent 12.6% 13.8%,#000 13.8% 15.6%,transparent 15.6% 16.2%,#000 16.2% 16.8%,transparent 16.8% 18.0%,#000 18.0% 19.2%,transparent 19.2% 19.8%,#000 19.8% 21.0%,transparent 21.0% 22.2%,#000 22.2% 24.0%,transparent 24.0% 25.8%,#000 25.8% 26.4%,transparent 26.4% 27.6%,#000 27.6% 29.4%,transparent 29.4% 30.6%,#000 30.6% 31.8%,transparent 31.8% 33.0%,#000 33.0% 34.8%,transparent 34.8% 36.6%,#000 36.6% 37.2%,transparent 37.2% 38.4%,#000 38.4% 40.2%,transparent 40.2% 41.4%,#000 41.4% 42.0%,transparent 42.0% 43.2%,#000 43.2% 43.8%,transparent 43.8% 45.0%,#000 45.0% 46.8%,transparent 46.8% 48.0%,#000 48.0% 49.2%,transparent 49.2% 51.0%,#000 51.0% 51.6%,transparent 51.6% 52.8%,#000 52.8% 54.0%,transparent 54.0% 55.2%,#000 55.2% 55.8%,transparent 55.8% 56.4%,#000 56.4% 58.2%,transparent 58.2% 58.8%,#000 58.8% 59.4%,transparent 59.4% 60.6%,#000 60.6% 61.8%,transparent 61.8% 63.6%,#000 63.6% 64.8%,transparent 64.8% 65.4%,#000 65.4% 66.0%,transparent 66.0% 67.2%,#000 67.2% 67.8%,transparent 67.8% 69.0%,#000 69.0% 69.6%,transparent 69.6% 70.8%,#000 70.8% 72.0%,transparent 72.0% 72.6%,#000 72.6% 74.4%,transparent 74.4% 75.6%,#000 75.6% 77.4%,transparent 77.4% 78.6%,#000 78.6% 79.8%,transparent 79.8% 81.0%,#000 81.0% 82.2%,transparent 82.2% 83.4%,#000 83.4% 85.2%,transparent 85.2% 86.4%,#000 86.4% 87.6%,transparent 87.6% 88.8%,#000 88.8% 90.0%,transparent 90.0% 91.2%,#000 91.2% 91.8%,transparent 91.8% 93.0%,#000 93.0% 94.8%,transparent 94.8% 96.6%,#000 96.6% 97.2%,transparent 97.2% 99.0%,#000 99.0% 99.6%,transparent 99.6% 100.8%) content-box;
+}
+.code { margin: 4px 0 18px; text-align: center; font-size: var(--small); letter-spacing: .25em; }
+
+/* ——— служебные строки по углам ——— */
+.corner {
+  display: flex;
+  justify-content: space-between;
+  gap: 2ch;
+  font-size: var(--small);
+  line-height: 1.5;
+}
+.corner.top { margin-bottom: 14px; }
+.corner.bottom { margin-top: 18px; }
+.foot { text-align: center; }
+.gallery .photo + .photo { margin-top: 4px; }
+
+/* ——— компьютер: широкий лист, колонка чека по центру, много воздуха ——— */
+@media (min-width: 960px) {
+  :root { --pad: 64px; --small: 10px; }
+  body { font-size: 12px; padding: 0; }
+  .paper {
+    width: min(1280px, 100%);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 136px var(--pad) 120px;
+  }
+  .home, .post { position: static; }
+  .corner { position: absolute; left: var(--pad); right: var(--pad); margin: 0; }
+  .corner.top { top: 48px; }
+  .corner.bottom { bottom: 44px; }
+
+  .col { width: min(440px, 100%); margin: 0 auto; }
+  .align-left .col { margin-left: 6%; }
+  .align-right .col { margin-right: 6%; }
+
+  h1 { font-size: 11px; }
+  .list a { font-size: 11px; }
+  .clist p { font-size: 12px; }
+  .cform input, .cform textarea { font-size: 13px; }
+
+  .gallery { width: min(880px, 100%); margin: 56px auto; }
+  .gallery .photo { margin: 0; }
+  .gallery:not(.multi) { width: min(640px, 100%); }
+  .gallery.multi { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+  .gallery.multi .photo + .photo { margin-top: 0; }
+  .gallery.multi .photo:last-child:nth-child(odd) { grid-column: 1 / -1; width: calc(50% - 6px); justify-self: center; }
+  .text .photo { margin: 24px 0; }
+  .align-left .gallery { margin-left: 6%; }
+  .align-right .gallery { margin-right: 6%; }
+
+  .home .col { margin-top: 8vh; }
+  .foot { margin-top: 72px; }
+  .barcode { width: 200px; height: 44px; margin-top: 0; }
+}
+
+/* эффект термопринтера: рваный край букв, без сглаживания, лёгкие непропечатки.
+   Только на телефонах: Safari на компьютере считает фильтр в низком разрешении, и мелкий текст рассыпается. */
+@media (hover: none) and (pointer: coarse) {
+  .rule, .c, .cols, .list, .sum, h1, .text > :not(.photo), .clist, .ftitle, .cform label span, .barcode, .code, .meta, .corner {
+    filter: url(#thermal);
+  }
+}
+
+/* на компьютере вместо фильтра — маска непропечатки: зерно и крапинки, Safari рисует её чётко */
+@media not all and (hover: none) and (pointer: coarse) {
+  .rule, .c, .cols, .list, .sum, h1, .text > :not(.photo), .clist, .ftitle, .cform label span, .send button, .barcode, .code, .meta, .corner {
+    -webkit-mask: url(/static/ink.png?2) 0 0 / 128px;
+    mask: url(/static/ink.png?2) 0 0 / 128px;
+  }
+  body { background: url(/static/dots.png?2) 0 0 / 128px, var(--paper) url(/static/paper2.webp) 0 0 / 512px; }
+}
+
+.meta { display: flex; justify-content: space-between; font-size: var(--small); font-weight: 700; }
